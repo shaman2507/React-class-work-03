@@ -1,16 +1,28 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import { QuizForm } from './QuizForm';
+import { QuizList } from './QuizList/QuizList';
+import { SearchBar } from './SearchBar';
+import { Component } from 'react';
+import { GlobalStyle } from './GlobalStyle';
+import { Layout } from './Layout';
+// import initialQuizItems from '../quiz-items.json';
+
+export class App extends Component {
+  state = {
+    quizItems: [],
+    filters: {
+      topic: '',
+      level: 'all',
+    },
+  };
+
+  render() {
+    return (
+      <Layout>
+        <QuizForm />
+        <SearchBar />
+        <QuizList items={this.state.quizItems} />
+        <GlobalStyle />
+      </Layout>
+    );
+  }
+}
