@@ -1,4 +1,4 @@
-import { QuizForm } from './QuizForm';
+import { QuizForm } from './QuizForm/QuizForm';
 import { QuizList } from './QuizList/QuizList';
 import { SearchBar } from './SearchBar';
 import { Component } from 'react';
@@ -6,13 +6,15 @@ import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout';
 import initialQuizItems from './quiz-items.json';
 
+const initialFilters = {
+  topic: '',
+  level: 'all',
+};
+
 export class App extends Component {
   state = {
     quizItems: initialQuizItems,
-    filters: {
-      topic: '',
-      level: 'all',
-    },
+    filters: initialFilters,
   };
 
   updateTopicFilter = newTopic => {
@@ -33,6 +35,21 @@ export class App extends Component {
           ...prevState.filters,
           level: newLevel,
         },
+      };
+    });
+  };
+
+  resetFilters = () => {
+    this.setState({
+      filters: initialFilters,
+    });
+  };
+
+  deleteQuiz = quizId => {
+    console.log('deleteQuiz', quizId);
+    this.setState(prevState => {
+      return {
+        quizItems: prevState.quizItems.filter(item => item.id !== quizId),
       };
     });
   };
@@ -60,8 +77,11 @@ export class App extends Component {
           filters={filters}
           onUpdateTopic={this.updateTopicFilter}
           onUpdateLevel={this.updateLevelFilter}
+          onReset={this.resetFilters}
         />
-        {visibleQuizItems.length > 0 && <QuizList items={visibleQuizItems} />}
+        {visibleQuizItems.length > 0 && <QuizList items={visibleQuizItems}
+          onDelete={this.deleteQuiz}
+        />}
         <GlobalStyle />
       </Layout>
     );
