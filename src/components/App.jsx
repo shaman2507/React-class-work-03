@@ -2,6 +2,7 @@ import { QuizForm } from './QuizForm/QuizForm';
 import { QuizList } from './QuizList/QuizList';
 import { SearchBar } from './SearchBar';
 import { Component } from 'react';
+import { nanoid } from 'nanoid';
 import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout';
 import initialQuizItems from './quiz-items.json';
@@ -54,6 +55,19 @@ export class App extends Component {
     });
   };
 
+  addQuiz = newQuiz => {
+    const quiz = {
+      ...newQuiz,
+      id: nanoid(),
+    }
+    
+    this.setState(prevState => {
+      return {
+        quizItems: [...prevState.quizItems, quiz],
+      };
+    });
+  };
+
   render() {
     const { quizItems,filters } = this.state;
 
@@ -72,7 +86,7 @@ export class App extends Component {
 
     return (
       <Layout>
-        <QuizForm />
+        <QuizForm onAdd={this.addQuiz} />
         <SearchBar
           filters={filters}
           onUpdateTopic={this.updateTopicFilter}

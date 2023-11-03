@@ -1,7 +1,15 @@
-import { Formik, Field } from 'formik';
-import { StyledForm } from './QuizForm.styled';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { Form, Field, FormGroup, ErrorMessage } from './QuizForm.styled';
 
-export const QuizForm = () => {
+const quizSchema = Yup.object().shape({
+    topic: Yup.string().min(3, 'Too Short!').required('Required'),
+    time: Yup.number().min(10, 'Must be 10 or more').required('Required'),
+    questions: Yup.number().min(3, 'At least 3').required('Required'),
+    level: Yup.string().oneOf(['beginner', 'intermediate', 'advanced']),
+})
+
+export const QuizForm = ({ onAdd }) => {
     return (
         <Formik
             initialValues={{
@@ -9,39 +17,45 @@ export const QuizForm = () => {
                 time: 0,
                 questions: 0,
                 level: 'beginner',
-            }}
+            }
+        }   
+            validationSchema={quizSchema}
             onSubmit={(values, actions) => {
-                console.log(values);
+                onAdd(values);
                 actions.resetForm();
             }}
         >
-            <StyledForm>
-                <label>
+            <Form>
+                <FormGroup>
                     Topic
                     <Field name="topic" />
-                </label>
+                    <ErrorMessage name="topic" component="span" />
+                </FormGroup>
                 
-                <label>
+                <FormGroup>
                     Time
-                    <Field name="time" type="number"/>
-                </label>
+                    <Field name="time" type="number" />
+                    <ErrorMessage name="time" component="span" />
+                </FormGroup>
 
-                <label>
+                <FormGroup>
                     Questions
-                    <Field name="questions" type="number"/> 
-                </label>
+                    <Field name="questions" type="number" />
+                    <ErrorMessage name="questions" component="span" />
+                </FormGroup>
                 
-                <label>
+                <FormGroup>
                     Level
                     <Field as="select" name="level">
                         <option value="beginner">Beginner</option>
                         <option value="intermediate">Intermediate</option>
                         <option value="advanced">Advanced</option>
                     </Field>
-                </label>
+                    <ErrorMessage name="level" component="span" />
+                </FormGroup>
                 
                 <button type="submit">Submit</button>
-            </StyledForm>
+            </Form>
         </Formik>
     );
 };
