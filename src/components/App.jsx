@@ -12,10 +12,33 @@ const initialFilters = {
   level: 'all',
 };
 
+const storageKey = 'quiz-filters';
+
 export class App extends Component {
   state = {
     quizItems: initialQuizItems,
     filters: initialFilters,
+  };
+
+  componentDidMount() {
+    const savedFilters = window.localStorage.getItem(storageKey);
+
+    if (savedFilters !== null) {
+      this.setState({
+        filters: JSON.parse(savedFilters),
+      });
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.filters !== this.state.filters
+    ) {
+      window.localStorage.setItem(
+        storageKey,
+        JSON.stringify(this.state.filters)
+      );
+    }
   };
 
   updateTopicFilter = newTopic => {
