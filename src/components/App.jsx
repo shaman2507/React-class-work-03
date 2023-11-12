@@ -6,6 +6,8 @@ import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout';
 import { addNewQuiz, deleteQuizById, fetchQuizzes } from './api';
 import { Puff } from 'react-loader-spinner';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 const initialFilters = {
   topic: '',
@@ -18,6 +20,7 @@ export class App extends Component {
   state = {
     quizItems: [],
     isLoading: false,
+    error: false,
     filters: initialFilters,
   };
 
@@ -31,11 +34,11 @@ export class App extends Component {
     }
 
     try {
-      this.setState({ isLoading: true });
+      this.setState({ isLoading: true, error: false });
       const initialQuizzes = await fetchQuizzes();
       this.setState({quizItems: initialQuizzes})
     } catch (error) {
-      
+      this.setState({ error: true });
     } finally {
       this.setState({ isLoading: false });
     }
@@ -82,31 +85,36 @@ export class App extends Component {
 
   deleteQuiz = async quizId => {
     try {
+      this.setState({ isLoading: true, error: false });
       const deletedQuiz = await deleteQuizById(quizId);
+      this.setState(prevState => ({
+        quizItems: prevState.quizItems.filter(
+          item => item.id !== deletedQuiz.id
+        ),
+      }));
     } catch (error) {
-      
+      toast.error("ERROR DELETING THE QUIZ!");
+    } finally {
+      this.setState({ isLoading: false });
     };
-    
   };
 
   addQuiz = async newQuiz => {
     try {
-      this.setState({ isLoading: true });
+      this.setState({ isLoading: true, error: false });
       const addedQuiz = await addNewQuiz(newQuiz);
-      this.setState(prevState => {
-        return {
-          quizItems: [...prevState.quizItems, addedQuiz],
-        };
-      });
+      this.setState(prevState => ({
+        quizItems: [...prevState.quizItems, addedQuiz],
+      }));
     } catch (error) {
-      
+      toast.error("ERROR ADDING QUIZ!");
     } finally {
       this.setState({ isLoading: false });
     };
   };
 
   render() {
-    const { quizItems,filters, isLoading} = this.state;
+    const { quizItems,filters, isLoading, error} = this.state;
 
     const visibleQuizItems = quizItems.filter(item => {
       const hasTopic = item.topic
@@ -140,11 +148,14 @@ export class App extends Component {
             wrapperStyle={{}}
             wrapperClass=""
             visible={true}
-        />)}
+          />
+        )}
+        {error && <b>Oops! Somthing went wrong! Please try to reloading this page!</b>}
         {visibleQuizItems.length > 0 && <QuizList items={visibleQuizItems}
           onDelete={this.deleteQuiz}
         />}
         <GlobalStyle />
+        <Toaster />
       </Layout>
     );
   }
