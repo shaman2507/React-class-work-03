@@ -6,8 +6,10 @@ const quizSchema = Yup.object().shape({
     topic: Yup.string().min(3, 'Too Short!').required('Required'),
     time: Yup.number().min(10, 'Must be 10 or more').required('Required'),
     questions: Yup.number().min(3, 'At least 3').required('Required'),
-    level: Yup.string().oneOf(['beginner', 'intermediate', 'advanced']),
-})
+    level: Yup.string()
+        .oneOf(['beginner', 'intermediate', 'advanced'])
+        .required('Required'),
+});
 
 export const QuizForm = ({ onAdd }) => {
     return (
