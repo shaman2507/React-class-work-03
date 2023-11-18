@@ -1,7 +1,7 @@
 import { QuizForm } from './QuizForm/QuizForm';
 import { QuizList } from './QuizList/QuizList';
 import { SearchBar } from './SearchBar';
-import { Component, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout';
 import { addNewQuiz, deleteQuizById, fetchQuizzes } from './api';
